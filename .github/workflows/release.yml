@@ -361,14 +361,3 @@ jobs:
           git commit -m "Update to v${NEW_VER}"
           git push
           EOF
-
-  update-homebrew:
-    needs: publish
-    runs-on: macos-latest
-    steps:
-      - name: Bump Homebrew Cask
-        uses: dawidd6/action-homebrew-bump-formula@v7
-        with:
-          token: ${{ secrets.HOMEBREW_TAP_TOKEN }}
-          cask: elasticvue
-          livecheck: true
