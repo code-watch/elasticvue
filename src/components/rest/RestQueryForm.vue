@@ -111,6 +111,7 @@ import { useResizeStore } from '../../store/resize'
 import { useTranslation } from '../../composables/i18n'
 import { IdbRestQueryTab } from '../../db/types.ts'
 import CustomInput from '../shared/CustomInput.vue'
+import { readFromClipboard } from '../../helpers/clipboard.ts'
 
 const CodeViewer = defineAsyncComponent(() => import('../shared/CodeViewer.vue'))
 const CodeEditor = defineAsyncComponent(() => import('../shared/CodeEditor.vue'))
@@ -119,7 +120,7 @@ const t = useTranslation()
 const props = defineProps<{ tab: IdbRestQueryTab }>()
 const emit = defineEmits(['reloadHistory', 'reloadSavedQueries'])
 const pasteClipboard = async () => {
-  const text = await navigator.clipboard.readText()
+  const text = await readFromClipboard()
   onPaste(text)
 }
 

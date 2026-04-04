@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.15.0
+
+* fix copy-to-clipboard on windows, fixes [#344](https://github.com/cars10/elasticvue/issues/344)
+
 ## 1.14.0
 
 * Do not store snapshot pagination, fixes [#339](https://github.com/cars10/elasticvue/issues/339)

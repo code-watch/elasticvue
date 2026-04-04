@@ -11,8 +11,10 @@ import { migrate } from './services/migrations.ts'
 import { setUuid } from './services/Uuid.ts'
 import { buildConfig } from './buildConfig.ts'
 import { importPredefinedClusters } from './composables/components/predefinedclusters/PredefinedClusters.ts'
+import { installTauriNavigatorClipboardShim } from './helpers/clipboard.ts'
 
 const setup = async () => {
+  installTauriNavigatorClipboardShim()
   migrate()
   setUuid()
 

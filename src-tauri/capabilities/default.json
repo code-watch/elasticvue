@@ -13,7 +13,8 @@
     "updater:default",
     "process:default",
     "dialog:default",
-    "clipboard-manager:default",
+    "clipboard-manager:allow-write-text",
+    "clipboard-manager:allow-read-text",
     "fs:default",
     "opener:default",
     "window-state:default"
