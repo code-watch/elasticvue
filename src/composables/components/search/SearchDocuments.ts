@@ -9,6 +9,7 @@ import {
   buildQueryFromTableOptions,
   getTableOptionsToApply
 } from '../../../helpers/search/searchQueryTableOptions'
+import { paginationFromQuery } from '../../../helpers/search/paginationFromQuery'
 
 export type EsSearchResult = {
   took: number | null
@@ -42,6 +43,10 @@ export const useSearchDocuments = () => {
       queryParsingError.value = true
       return
     }
+
+    const pag = paginationFromQuery(query as Record<string, unknown>, searchStore.pagination.rowsPerPage)
+    searchStore.pagination.page = pag.page
+    searchStore.pagination.rowsPerPage = pag.rowsPerPage
 
     try {
       searchResults.value = await callElasticsearch('search', query, searchStore.indices)

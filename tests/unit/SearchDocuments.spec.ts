@@ -130,6 +130,64 @@ describe('SearchDocuments', () => {
       expect(result).toEqual(tableOptionsWithSort)
     })
 
+    it('issue #347: second click same column toggles order (asc → desc)', () => {
+      const query = { sort: [{ 'Year.keyword': { order: 'asc' } }] }
+      const paginationDesc = { page: 1, rowsPerPage: 10, sortBy: 'Year.keyword', descending: true }
+      const tableOptionsDesc = buildQueryFromTableOptions(paginationDesc)
+      const result = getTableOptionsToApply(query, tableOptionsDesc, paginationDesc)
+      expect(result).toEqual({
+        from: 0,
+        size: 10,
+        sort: [{ 'Year.keyword': { order: 'desc' } }]
+      })
+    })
+
+    it('preserves multi-field sort in one array element when paginating (table still has sortBy)', () => {
+      const compound = {
+        'Year.keyword': { order: 'desc' },
+        'Title.keyword': { order: 'asc' }
+      }
+      const query = {
+        query: { query_string: { query: '*' } },
+        size: 10,
+        from: 30,
+        sort: [compound]
+      }
+      const pagination = { page: 4, rowsPerPage: 10, sortBy: 'Year.keyword', descending: true }
+      const tableOptions = buildQueryFromTableOptions(pagination)
+      const result = getTableOptionsToApply(query, tableOptions, pagination)
+      expect(result).toEqual({ from: 30, size: 10 })
+      expect(result).not.toHaveProperty('sort')
+      expect(Object.assign({}, query, result).sort).toEqual([compound])
+    })
+
+    it('preserves string sort entries (e.g. _doc, _score) when paginating', () => {
+      const query = { sort: ['_doc'], size: 10, from: 0 }
+      const pagination = { page: 2, rowsPerPage: 10, sortBy: 'name', descending: false }
+      const tableOptions = buildQueryFromTableOptions(pagination)
+      const result = getTableOptionsToApply(query, tableOptions, pagination)
+      expect(result).toEqual({ from: 10, size: 10 })
+      expect(result).not.toHaveProperty('sort')
+      expect(Object.assign({}, query, result).sort).toEqual(['_doc'])
+    })
+
+    it('preserves object-form sort (e.g. _script) when paginating', () => {
+      const scriptSort = {
+        _script: {
+          type: 'number',
+          script: { lang: 'painless', source: "doc['x'].value" },
+          order: 'asc'
+        }
+      }
+      const query = { sort: scriptSort, size: 10, from: 0 }
+      const pagination = { page: 2, rowsPerPage: 10, sortBy: '', descending: false }
+      const tableOptions = buildQueryFromTableOptions(pagination)
+      const result = getTableOptionsToApply(query, tableOptions, pagination)
+      expect(result).toEqual({ from: 10, size: 10 })
+      expect(result).not.toHaveProperty('sort')
+      expect(Object.assign({}, query, result).sort).toEqual(scriptSort)
+    })
+
     it('case 3: single manual sort, table has different sortBy → preserve', () => {
       const query = { sort: [{ date: { order: 'asc' } }] }
       const paginationWithSort = { ...basePagination, sortBy: 'name', descending: false }

@@ -93,10 +93,11 @@
 
               <template #bottom="scope">
                 <table-bottom
-                  v-model="searchStore.pagination.rowsPerPage"
+                  :model-value="searchStore.pagination.rowsPerPage"
                   :scope="scope"
                   :total="hits.length"
                   :rows-per-page="rowsPerPage"
+                  @update:model-value="onRowsPerPageSelect"
                   @rows-per-page-accepted="acceptRowsPerPage"
                 />
               </template>
@@ -169,6 +170,7 @@ const {
   filteredHits,
   rowsPerPage,
   onRequest,
+  onRowsPerPageSelect,
   reload,
   selectedItems,
   genDocStr,

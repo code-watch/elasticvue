@@ -41,15 +41,13 @@ export const useSearchResultsTable = (props: SearchResultsTableProps, emit: any)
 
   const genDocStr = (doc: ElasticsearchDocumentInfo) => [doc._index, doc._type, doc._id].join('####')
 
-  watch(
-    () => searchStore.pagination.rowsPerPage,
-    () => {
-      if (searchStore.pagination.rowsPerPage === rowsPerPage[rowsPerPage.length - 1].value) {
-        searchStore.stickyTableHeader = true
-      }
-      onRequest({ pagination: searchStore.pagination })
+  const onRowsPerPageSelect = (value: number) => {
+    searchStore.pagination.rowsPerPage = value
+    if (value === rowsPerPage[rowsPerPage.length - 1].value) {
+      searchStore.stickyTableHeader = true
     }
-  )
+    onRequest({ pagination: searchStore.pagination })
+  }
 
   watch(
     () => props.results,
@@ -153,6 +151,7 @@ export const useSearchResultsTable = (props: SearchResultsTableProps, emit: any)
     filteredHits,
     rowsPerPage,
     onRequest,
+    onRowsPerPageSelect,
     reload,
     selectedItems,
     genDocStr,
